@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"math/rand"
 	"strings"
 	"time"
@@ -8,14 +9,19 @@ import (
 	"github.com/pterm/pterm"
 )
 
+var flagSize = flag.Int("size", 10, "size of the board")
+var flagAlive = flag.String("alive", "✅", "character representing 'alive'")
+var flagDead = flag.String("dead", "❌", "character representing 'dead'")
+
 var size int
 var board, buffer []int
+var alive, dead string
 
 func formatNumber(i int) string {
 	if i == 1 {
-		return "✅"
+		return alive
 	}
-	return "❌"
+	return dead
 }
 
 func printBoard() string {
@@ -117,8 +123,10 @@ var src = rand.NewSource(time.Now().UnixNano())
 var r = rand.New(src)
 
 func main() {
-	size = 25
-//	rounds := 1000
+	flag.Parse()
+	size = *flagSize
+	alive = *flagAlive
+	dead = *flagDead
 
 	board = make([]int, size*size)
 	buffer = make([]int, size*size)
