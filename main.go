@@ -143,7 +143,6 @@ func main() {
 	str := pterm.DefaultParagraph.WithMaxWidth(19).Sprint(printBoard())
 	area.Update(str)
 
-	//for i := 0; i < rounds; i++ {
 	for true {
 		time.Sleep(500 * time.Millisecond)
 		playRound()
