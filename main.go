@@ -10,12 +10,36 @@ import (
 )
 
 var flagSize = flag.Int("size", 10, "size of the board")
+var flagBoard = flag.String("board", "", "starting board")
 var flagAlive = flag.String("alive", "✅", "character representing 'alive'")
 var flagDead = flag.String("dead", "❌", "character representing 'dead'")
 
 var size int
 var board, buffer []int
 var alive, dead string
+
+func readBoard(drawnBoard string) {
+	if drawnBoard == "" {
+		return
+	}
+	allRows := strings.Split(drawnBoard, ";")
+	if len(allRows) != size {
+		return
+	}
+	for _, row := range allRows {
+		if len(row) != size {
+			return
+		}
+	}
+	for rowNum, row := range allRows {
+		for cellNum, cell := range strings.Split(row, "") {
+			idx := (rowNum * len(allRows)) + cellNum
+			if cell == "1" {
+				board[idx] = 1
+			}
+		}
+	}
+}
 
 func formatNumber(i int) string {
 	if i == 1 {
@@ -131,10 +155,14 @@ func main() {
 	board = make([]int, size*size)
 	buffer = make([]int, size*size)
 
-	for i := 0; i < len(board); i++ {
-		rv := r.Intn(25)
-		if rv == 0 {
-			board[i] = 1
+	if *flagBoard != "" {
+		readBoard(*flagBoard)
+	} else {
+		for i := 0; i < len(board); i++ {
+			rv := r.Intn(25)
+			if rv == 0 {
+				board[i] = 1
+			}
 		}
 	}
 
