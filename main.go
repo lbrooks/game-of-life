@@ -30,7 +30,7 @@ func main() {
 
 	for true {
 		time.Sleep(500 * time.Millisecond)
-		game.PlayRound()
+		game.PlayRoundCategorized()
 		area.Update(para.Sprint(game.AsString(alive, dead)))
 	}
 }

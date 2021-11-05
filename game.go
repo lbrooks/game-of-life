@@ -70,6 +70,90 @@ func (l *Life) AsString(alive, dead string) string {
 	return out.String()
 }
 
+func (l *Life) checkCorners() {
+	ul := 0
+	l.buffer[ul] = determineLife(
+		l.board[ul],
+		l.board[ul + 1] + l.board[ul + l.size] + l.board[ul + l.size + 1],
+	)
+
+	ur := l.size - 1
+	l.buffer[ur] = determineLife(
+		l.board[ur],
+		l.board[ur - 1] + l.board[ur - 1 + l.size] + l.board[ur + l.size],
+	)
+
+	dl := len(l.board) - l.size
+	l.buffer[dl] = determineLife(
+		l.board[dl],
+		l.board[dl-l.size] + l.board[dl-l.size+1] + l.board[dl+1],
+	)
+
+	dr := len(l.buffer) - 1
+	l.buffer[dr] = determineLife(
+		l.board[dr],
+		l.board[dr-l.size-1] + l.board[dr-l.size] + l.board[dr-1],
+	)
+}
+
+func (l *Life) checkEdges() {
+	//top
+	for i := 1; i < l.size - 1; i++ {
+		l.buffer[i] = determineLife(
+			l.board[i],
+			l.board[i-1] + l.board[i+1] + l.board[i-1+l.size] + l.board[i+l.size] + l.board[i+1+l.size],
+		)
+	}
+
+	//left
+	for i := l.size; i < len(l.buffer) - l.size; i += l.size {
+		l.buffer[i] = determineLife(
+			l.board[i],
+			l.board[i-l.size] + l.board[i-l.size+1] + l.board[i+1] + l.board[i+l.size] + l.board[i+l.size+1],
+		)
+	}
+
+	//right
+	for i := l.size + l.size - 1; i < len(l.buffer) - 1; i += l.size {
+		l.buffer[i] = determineLife(
+			l.board[i],
+			l.board[i-l.size-1] + l.board[i-l.size] + l.board[i-1] + l.board[i-1+l.size] + l.board[i+l.size],
+		)
+	}
+
+	//bottom
+	for i := len(l.buffer) - l.size + 1; i < len(l.buffer) - 1; i++ {
+		l.buffer[i] = determineLife(
+			l.board[i],
+			l.board[i-l.size-1] + l.board[i-l.size] + l.board[i-l.size+1] + l.board[i-1] + l.board[i+1],
+		)
+	}
+}
+
+func (l *Life) checkMiddle() {
+	for i := l.size + 1; i < len(l.buffer) - 1 - l.size; {
+		l.buffer[i] = determineLife(
+			l.board[i],
+			l.board[i-l.size-1] + l.board[i-l.size] + l.board[i-l.size+1] + l.board[i-1] + l.board[i+1] + l.board[i+l.size-1] + l.board[i+l.size] + l.board[i+l.size+1],
+		)
+		if (i % l.size) == (l.size - 2) {
+			i += 3
+		} else {
+			i++
+		}
+	}
+}
+
+func (l *Life) PlayRoundCategorized() {
+	l.checkCorners()
+	l.checkEdges()
+	l.checkMiddle()
+
+	for i, c := range l.buffer {
+		l.board[i] = c
+	}
+}
+
 func (l *Life) PlayRound() {
 	for i, c := range l.board {
 		count := l.sumNeighbors(i)
