@@ -20,8 +20,8 @@ func main() {
 	alive = *flagAlive
 	dead = *flagDead
 
-	game := NewLife(*flagSize)
-	game.InitializeGame(*flagBoard)
+	game := NewSingleArrayCategorizedRandom(*flagSize)
+	//game.InitializeGame(*flagBoard)
 
 	area, _ := pterm.DefaultArea.WithCenter().Start()
 	para := pterm.DefaultParagraph.WithMaxWidth(*flagSize)
@@ -30,7 +30,7 @@ func main() {
 
 	for true {
 		time.Sleep(500 * time.Millisecond)
-		game.PlayRoundCategorized()
+		game.PlayRound()
 		area.Update(para.Sprint(game.AsString(alive, dead)))
 	}
 }
